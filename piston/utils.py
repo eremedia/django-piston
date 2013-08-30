@@ -68,7 +68,12 @@ class rc_factory(object):
                     self._container = [content]
                     self._is_string = True
 
-            content = property(HttpResponse._get_content, _set_content)
+            try:
+                content = property(HttpResponse._get_content, _set_content)
+            except AttributeError:
+                @HttpResponse.content.setter
+                def content(self, content):
+                    self._set_content(content)
 
         return HttpResponseWrapper(r, content_type='text/plain', status=c)
 
